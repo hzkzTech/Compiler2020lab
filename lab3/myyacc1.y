@@ -25,7 +25,6 @@ void yyerror(const char* s);
 %right UMINUS
 
 %%
-// TODO  %d error why?
 lines :  lines expr ';' {printf("result: %f\n", $2);}
 		| lines ';'
 		|
@@ -75,11 +74,13 @@ int yylex()
 		else {return t; }
 	}
 }
+
 void yyerror(const char* s){
 	fprintf(stderr, "Parse erro: %s\n", s);
 	exit(1);
 }
-int main(void)
+
+int main(int argc,char *argv[])
 {
 	yyin = stdin;
 	do{
