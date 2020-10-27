@@ -25,7 +25,7 @@ void yyerror(const char* s);
 %right UMINUS
 
 %%
-lines :  lines expr ';' {printf("result: %f\n", $2);}
+lines :  lines expr ';' {printf("%f\n", $2);}
 		| lines ';'
 		|
 		;

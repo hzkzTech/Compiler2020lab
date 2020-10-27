@@ -22,12 +22,14 @@ void yyerror(const char* s);
 %token RB
 %token NUMBER
 %token ID
+
 %left ADD MUS
 %left MUL DIV
 %right UMINUS
+
 %%
 
-lines : lines expr ';' { printf("result: %s\n" , $2);}
+lines : lines expr ';' { printf("%s\n", $2);}
       | lines ';'
       |
       ;
@@ -42,6 +44,7 @@ expr  : expr ADD expr { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); str
       | NUMBER        { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); strcat($$," "); }
       | ID            { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); strcat($$," "); }
       ;
+
 %%
 
 // programs section
@@ -99,6 +102,7 @@ int yylex()
 		}
 	}
 }
+
 int main(void)
 {
     yyin = stdin;
