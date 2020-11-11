@@ -40,7 +40,6 @@ expr :   expr ADD expr   {$$ = $1 + $3;}
 						$$ = $1 / $3;
 						}
 		| LB expr RB {$$ = $2;}
-		//可以用%prec强制定义产生式的优先级和结合性
 		| SUB expr %prec UMINUS {$$=-$2;}
 		| NUMBER
 	    ; 

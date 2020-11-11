@@ -3,40 +3,35 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <malloc.h>
-#include<hash_map>
-#ifndef YYSTYPE
-#define YYSTYPE double
-#endif
+#include "hash.h"
 
 int yylex();
 extern int yyparse();
 FILE* yyin;
-void yyerror(const char* s);
-bool isalpha(char c);
+void yyerror(const char*);
 
-struct id_struct
-{
-    char id_name[50];
-    double id_value;
-}id;
 %}
 
+%union{
+	char key[50];
+    double value;
+}
 
-%token NUMBER
-%token ADD
-%token MUL
-%token DIV
-%token LB RB
-%token SUB
-%token ID 
-%token EQUAL
-%token ADD_ADD SUB_SUB
+%type <value>expr
+
+%token <value>NUMBER
+%token <value>ADD
+%token <value>MUL
+%token <value>DIV
+%token <value>LB RB
+%token <value>SUB
+%token <key>ID 
+%token <value>EQUAL
 
 %right EQUAL
 %left ADD MUS
 %left MUL DIV
 %right UMINUS
-%right ADD_ADD SUB_SUB
 
 %%
 
@@ -45,7 +40,7 @@ lines :  lines expr ';' {printf("%f\n", $2);}
 		|
 		;
 
-expr :   expr ADD expr   {$$ = $1 + $3;}
+expr :   expr ADD expr   {$$= $1+ $3;}
 		| expr SUB expr  {$$ = $1 - $3;}
 		| expr MUL expr  {$$ = $1 * $3;}
 		| expr DIV expr  {
@@ -55,29 +50,20 @@ expr :   expr ADD expr   {$$ = $1 + $3;}
 						$$ = $1 / $3;
 						}
 		| LB expr RB {$$ = $2;}
-		//可以用%prec强制定义产生式的优先级和结合性
 		| SUB expr %prec UMINUS {$$=-$2;}
 		| NUMBER
-        | ID {$$ = id.id_value;}
+        | ID {
+			$$=lookup($1)->value;
+		}
         | ID EQUAL expr {
                         $$ = $3;
-                        id.id_value = $3;
-                        }
-        | ADD_ADD ID    { $$ = id.id_value + 1; id.id_value += 1; } // (++a)
-		| SUB_SUB ID    { $$ = id.id_value - 1; id.id_value -= 1; } // (--a)
-		| ID ADD_ADD    { $$ = id.id_value; id.id_value += 1; } //  (a++)
-		| ID SUB_SUB    { $$ = id.id_value; id.id_value -= 1; }  // (a--)
+                        set_table($1,$3);  //修改符号表，一定会执行在insert()之后
+                    }
 	    ; 
 
 %%
 
-
-bool isalpha(char c){
-    if((t >= 'a' && t <= 'z' ) || (t >= 'A' && t <= 'Z') || (t == '_')) {
-        return true;
-    }
-    return false;
-}
+// programs section
 
 int yylex()
 {
@@ -85,27 +71,11 @@ int yylex()
     
 	while (1){
 		t = getchar();
-		if (t == ' ' || t == '\t'||t=='\n')
-		{}
-        else if (t == '+'){
-            t = getchar();
-			if (t == '+')
-				return ADD_ADD;
-			else {
-				ungetc(t, stdin);
-				return ADD;
-                }
-        }
-        else if (t == '-'){
-            t = getchar();
-
-			if (t == '-')
-				return SUB_SUB;
-			else {
-				ungetc(t, stdin);
-				return SUB;
-                }
-        }
+		if (t == ' ' || t == '\t'||t=='\n');
+        else if (t == '+')
+			return ADD;
+        else if (t == '-')
+			return SUB;
         else if (t == '*')
             return MUL;
         else if (t == '/')
@@ -116,27 +86,33 @@ int yylex()
 			return RB;
         else if (t == '=')
             return EQUAL;
-		else if (isdigit(t)) {
-            yylval = 0;
-            while(isdigit(t)){
-			yylval = yylval * 10 + t - '0';
-            t = getchar();
+		else if (isdigit(t)) {		//数字
+			strcpy(yylval.key,"");
+            yylval.value = 0;
+            while(isdigit(t)){		
+				yylval.value = yylval.value * 10 + t - '0';
+				t = getchar();
             }
-            ungetc(t, stdin);
+            ungetc(t, yyin);
 			return NUMBER;
 		}
-        else if ((t >= 'a' && t <= 'z' ) || (t >= 'A' && t <= 'Z') || (t == '_')) {
+        else if ((t >= 'a' && t <= 'z' ) || (t >= 'A' && t <= 'Z')|| (t == '_')) {  // 标识符
             int ti=0;
-            while(('a'<=t&&t<='z')||('A'<=t&&'Z'>=t)||(t=='_')||(t>='0'&&t<='9')){
-                id.id_name[ti] = t;
+			char id_name[50];
+            while((t >= 'a' && t <= 'z' ) || (t >= 'A' && t <= 'Z')||(t=='_')||(t>='0'&&t<='9')){
+                id_name[ti] = t;
                 ti++;
                 t=getchar(); 
             }
-            id.id_name[ti] = '\0';
-            ungetc(t,stdin);
+            id_name[ti] = '\0';
+			insert(id_name,0.0);		// insert函数会先检查是否存在，已存在则不插入符号表
+			strcpy(yylval.key,id_name);
+            ungetc(t,yyin);
             return ID; 
         }
-		else {return t; }
+		else {
+			return t;
+		}
 	}
 }
 

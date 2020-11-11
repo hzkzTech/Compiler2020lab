@@ -7,13 +7,13 @@
 typedef unsigned int uint;
 /*定义一个链表的节点*/
 typedef struct Node{
-    char key[17];
+    char key[50];
     double value;
     struct Node *next;
-};
+}Node;
 
-/*定义一组链表*/
-Node *node[HASHSIZE];
+//符号表！——一组开哈希链表
+Node *id_table[HASHSIZE];
 
 /*初始化:为链表头开辟空间*/
 int init(Node *node)
@@ -43,7 +43,7 @@ Node *lookup(const char *key)
     Node *np;
     uint index;
     index = hash(key);
-    for(np = node[index];np;np = np->next){
+    for(np = id_table[index];np;np = np->next){
         if(!strcmp(key, np->key))
             return np;
     }
@@ -51,7 +51,7 @@ Node *lookup(const char *key)
 }
 
 /*插入：先查找该值是否存在，然后计算哈希值，插入对应的链表*/
-uint install(const char *key, const double value)
+uint insert(const char *key, double value)
 {
     uint index;
     Node *np;
@@ -64,8 +64,19 @@ uint install(const char *key, const double value)
         strcpy(np->key, key);
         np->value=value;
 
-        np->next = node[index];
-        node[index] = np;
+        np->next = id_table[index];
+        id_table[index] = np;
     }
     return 0;
+}
+
+/*修改值*/
+void set_table(const char *key,double value){
+    Node *np;
+    uint index;
+    index = hash(key);
+    for(np = id_table[index];np;np = np->next){
+        if(!strcmp(key, np->key))
+            np->value=value;
+    }
 }

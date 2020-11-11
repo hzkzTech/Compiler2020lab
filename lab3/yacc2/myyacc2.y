@@ -23,7 +23,7 @@ void yyerror(const char* s);
 %token NUMBER
 %token ID
 
-%left ADD MUS
+%left ADD SUB
 %left MUL DIV
 %right UMINUS
 
