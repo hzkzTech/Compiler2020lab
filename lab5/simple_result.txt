@@ -1,0 +1,13 @@
+lno@0 @0 program 
+lno@1 @1 statement children: [@2 @3 @4 ] stmt: decl children: [@2 @3 @4 ] stmt: decl 
+lno@1 @2 type type: int 
+lno@1 @3 variable varname: a 
+lno@1 @4 const type: int 
+lno@2 @5 statement children: [@6 @7 @8 ] stmt: decl children: [@6 @7 @8 ] stmt: decl 
+lno@2 @6 type type: int 
+lno@2 @7 variable varname: b 
+lno@2 @8 const type: int 
+lno@3 @9 statement children: [@10 @11 @12 ] stmt: decl children: [@10 @11 @12 ] stmt: decl 
+lno@3 @10 type type: int 
+lno@3 @11 variable varname: c 
+lno@3 @12 const type: int 

@@ -1,8 +1,8 @@
 .PHONY:lcc,clean
 lcc:
-flex -+ mylex2.l
-g++ lex.yy.cc -o lcc.out
-./lcc.out
+	flex -+ mylex3.l
+	g++ lex.yy.cc -o lcc.out
+	./lcc.out <test.c
 clean:
-rm *.out
+	rm *.out
 

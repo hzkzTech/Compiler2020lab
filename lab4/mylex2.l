@@ -1,16 +1,13 @@
- %{
+%option noyywrap c++
+%top{
 #include<math.h>
-#include <iostream>
+#include<iostream>
 using namespace std;
 int mylineno = 0;
-%}
-
-%option noyywrap c++
+}
 
 string  \"[^\n"]+\"
-
 ws      [ \t]+
-
 alpha   [A-Za-z]
 dig     [0-9]
 name    ({alpha}|{dig}|\$)({alpha}|{dig}|[_.\-/$])*
@@ -21,32 +18,23 @@ number  {num1}|{num2}
 %%
 
 {ws}    /* skip blanks and tabs */
-
-/*    {
-        int c;
-
-        while((c = yyinput()) != 0)
-            {
-            if(c == '\n')
-                ++mylineno;
-
-            else if(c == '*')
-                {
-                if((c = yyinput()) == '/')
-                    break;
-                else
-                    unput(c);
+"/*" {
+            int c;
+            while((c = yyinput()) != 0){
+                if(c == '\n')
+                    ++mylineno;
+                else if(c == '*'){
+                    if((c = yyinput()) == '/')
+                        break;
+                    else
+                        unput(c);
                 }
             }
-        }
-
-{number}  cout << "number " << YYText()<< '\n';
-
-\n        mylineno++;
-
-{name}    cout << "name " << YYText() << '\n';
-
-{string}  cout << "string " << YYText() << '\n';
+        }   
+{number} cout << "number " << YYText()<< '\n';
+\n mylineno++;
+{name} cout << "name " << YYText() << '\n';
+{string} cout << "string " << YYText() << '\n';
 
 %%
 
