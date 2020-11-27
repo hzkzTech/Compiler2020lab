@@ -37,10 +37,6 @@ void TreeNode::genNodeId() {    //先序遍历
 void TreeNode::printNodeInfo() {
     cout<<"lno@"<<lineno<<" @"<<nodeID<<" "<<nodeType2String(nodeType)<<" ";
     printSpecialInfo();
-    if(nodeType==NODE_STMT){
-        printChildrenId();
-        cout<<"stmt: "<<sType2String(stype)<<" ";
-    }
     cout<<endl;
 }
 

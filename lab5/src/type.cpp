@@ -10,6 +10,8 @@ string Type::getTypeInfo() {
             return "bool";
         case VALUE_INT:
             return "int";
+        case VALUE_FLOAT:
+            return "float";
         case VALUE_CHAR:
             return "char";
         case VALUE_STRING:

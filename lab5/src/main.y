@@ -6,13 +6,15 @@
     int yylex();
     int yyerror( char const * );
 %}
-%token T_CHAR T_INT T_STRING T_BOOL 
+%token T_CHAR T_INT T_STRING T_BOOL T_FLOAT //TODO:类型声明
 
 %token LOP_ASSIGN 
 
 %token SEMICOLON
 
-%token IDENTIFIER INTEGER CHAR BOOL STRING
+%token IDENTIFIER 
+
+%token INTEGER CHAR BOOL STRING FLOAT //TODO:常量
 
 %left LOP_EQ
 
@@ -62,11 +64,19 @@ expr
 | STRING {
     $$ = $1;
 }
+| FLOAT{
+    $$ = $1;
+}
+| BOOL{
+    $$ = $1;
+}
 ;
 
 T: T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;} 
 | T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
 | T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
+| T_FLOAT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_FLOAT;} 
+| T_STRING {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_STRING;} 
 ;
 
 %%

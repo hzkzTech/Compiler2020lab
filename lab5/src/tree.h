@@ -53,6 +53,7 @@ public:
     int int_val;
     char ch_val;
     bool b_val;
+    float float_val;  //TODO:添加对应类型的值
     string str_val;
     string var_name;
 public:
